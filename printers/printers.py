@@ -60,7 +60,7 @@ def getData():
             ])
 
             if 'ERROR' in line:
-                job['size']  = 0
+                job['size']  = '0'
                 job['time']  = ''
                 job['error'] = line[line.index('ERROR'):]
             else:
