@@ -8,8 +8,10 @@ import sys
 import time
 import urllib.request
 
+
 class PageParser(HTMLParser):
     """Parser for CDF Lab Machine Usage page."""
+
     # Flag for whether an element should be parsed
     read_data = False
 
@@ -51,8 +53,10 @@ class PageParser(HTMLParser):
 
             elif self.row_cell == 5:
                 if (self.timestamp == ''):
-                    timestamp = time.strptime(data.strip('\u00a0\\n'), '%a %b %d %H:%M:%S EDT %Y')
-                    self.timestamp = time.strftime('%Y-%m-%d %H:%M:%S EST', timestamp)
+                    timestamp = time.strptime(data.strip(
+                        '\u00a0\\n'), '%a %b %d %H:%M:%S EDT %Y')
+                    self.timestamp = time.strftime(
+                        '%Y-%m-%d %H:%M:%S EST', timestamp)
 
                 self.row_cell = -1
 
@@ -60,7 +64,8 @@ class PageParser(HTMLParser):
             self.read_data = False
 
 if __name__ == '__main__':
-    html = str(urllib.request.urlopen('http://www.cdf.toronto.edu/usage/usage.html').read())
+    html = str(urllib.request.urlopen(
+        'http://www.cdf.toronto.edu/usage/usage.html').read())
     parser = PageParser()
     parser.feed(html)
 
@@ -69,9 +74,16 @@ if __name__ == '__main__':
         ('labs', parser.data)
     ])
 
-    argparser = argparse.ArgumentParser(description='Scraper for CDF lab data.')
-    argparser.add_argument('-o', '--output', help='The output path. Defaults to current directory.', required=False)
-    argparser.add_argument('-f', '--filename', help='The output filename. Defaults to "cdflabs.json".', required=False)
+    argparser = argparse.ArgumentParser(
+        description='Scraper for CDF lab data.')
+    argparser.add_argument(
+        '-o', '--output',
+        help='The output path. Defaults to current directory.',
+        required=False)
+    argparser.add_argument(
+        '-f', '--filename',
+        help='The output filename. Defaults to "cdflabs.json".',
+        required=False)
 
     args = argparser.parse_args()
     output = '.'

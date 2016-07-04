@@ -7,14 +7,16 @@ import subprocess
 import sys
 import time
 
+
 def getData():
     """Returns the print queue jobs in a nicely formatted JSON object."""
 
-    raw_data = subprocess.Popen('lpq -a', shell=True, stdout=subprocess.PIPE).stdout.read()
+    raw_data = subprocess.Popen(
+        'lpq -a', shell=True, stdout=subprocess.PIPE).stdout.read()
     data = raw_data.decode('ISO-8859-1').split('\n')
 
     junk = ['@ps2 \'', 'Rank   Owner/ID', ' printable job', 'no server active',
-        'Filter_status: ', ' Status: ', ': pid ']
+            'Filter_status: ', ' Status: ', ': pid ']
 
     parsed = []
     new_printer = False
@@ -23,7 +25,8 @@ def getData():
         # New printer section: get description
         if new_printer:
             if '@ps2' in line:
-                parsed[-1]['description'] = line.split('@ps2 ')[1].replace("'", "")
+                parsed[-1]['description'] = line.split(
+                    '@ps2 ')[1].replace("'", "")
             else:
                 parsed[-1]['description'] = line
             new_printer = False
@@ -51,12 +54,7 @@ def getData():
 
             job = OrderedDict([
                 ('rank', job_data[0]),
-                ('job', job_data[3]),
-
-                # TEMPORARILY HERE FOR COMPAT REASONS
-                ('owner', ''),
-                ('class', ''),
-                ('files', '')
+                ('job', job_data[3])
             ])
 
             if 'ERROR' in line:
@@ -64,8 +62,8 @@ def getData():
                 job['time']  = ''
                 job['error'] = line[line.index('ERROR'):]
             else:
-                job['size']  = job_data[-2]
-                job['time']  = job_data[-1]
+                job['size'] = job_data[-2]
+                job['time'] = job_data[-1]
                 job['error'] = ''
 
             if not job in parsed[-1]['jobs']:
@@ -75,16 +73,24 @@ def getData():
     return parsed
 
 if __name__ == '__main__':
-    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S EST')
+    timestamp = datetime.datetime.fromtimestamp(
+        time.time()).strftime('%Y-%m-%d %H:%M:%S EST')
 
     data = OrderedDict([
         ('timestamp', timestamp),
         ('printers', getData())
     ])
 
-    argparser = argparse.ArgumentParser(description='Scraper for CDF printer queue data.')
-    argparser.add_argument('-o', '--output', help='The output path. Defaults to current directory.', required=False)
-    argparser.add_argument('-f', '--filename', help='The output filename. Defaults to "cdfprinters.json".', required=False)
+    argparser = argparse.ArgumentParser(
+        description='Scraper for CDF printer queue data.')
+    argparser.add_argument(
+        '-o', '--output',
+        help='The output path. Defaults to current directory.',
+        required=False)
+    argparser.add_argument(
+        '-f', '--filename',
+        help='The output filename. Defaults to "cdfprinters.json".',
+        required=False)
 
     args = argparser.parse_args()
     output = '.'
