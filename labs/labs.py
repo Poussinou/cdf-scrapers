@@ -65,7 +65,7 @@ class PageParser(HTMLParser):
 
 if __name__ == '__main__':
     html = str(urllib.request.urlopen(
-        'http://www.cdf.toronto.edu/usage/usage.html').read())
+        'http://www.teach.cs.toronto.edu/usage/usage.html').read())
     parser = PageParser()
     parser.feed(html)
 
