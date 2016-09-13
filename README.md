@@ -9,10 +9,10 @@ information for [CDF](http://www.cdf.toronto.edu/) services.
 ### Lab machine availability
 
 ##### Data
-<http://www.cdf.toronto.edu/~g3cheunh/cdflabs.json>
+<http://www.teach.cs.toronto.edu/~cheun550/cdflabs.json>
 
 ##### Scraper source
-<http://www.cdf.toronto.edu/usage/usage.html>
+<http://www.teach.cs.toronto.edu/usage/usage.html>
 
 ##### Output format
 ```js
@@ -33,7 +33,7 @@ information for [CDF](http://www.cdf.toronto.edu/) services.
 ### Printer job queues
 
 ##### Data
-<http://www.cdf.toronto.edu/~g3cheunh/cdfprinters.json>
+<http://www.teach.cs.toronto.edu/~cheun550/cdfprinters.json>
 
 ##### Scraper source
 Output of the `lpq -a` command on a CDF machine.
