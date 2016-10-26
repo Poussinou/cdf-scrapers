@@ -1,7 +1,8 @@
 # CDF Scrapers
 
 This is a library of scrapers for producing easy-to-consume JSON files of
-information for [CDF](http://www.cdf.toronto.edu/) services.
+information for [UofT CS Teaching Labs](http://www.teach.cs.toronto.edu/) 
+(formally CDF) services.
 
 
 ## Library Reference
@@ -36,7 +37,7 @@ information for [CDF](http://www.cdf.toronto.edu/) services.
 <http://www.teach.cs.toronto.edu/~cheun550/cdfprinters.json>
 
 ##### Scraper source
-Output of the `lpq -a` command on a CDF machine.
+Output of the `lpq -a` command run on the `wolf.teach.cs.toronto.edu` server.
 
 ##### Output format
 ```js
@@ -85,9 +86,10 @@ $ python3 SCRIPT_NAME.py -h
 ```
 
 
-### Running on CDF
+### Running on the server
 
-The scripts are currently being run via Cron jobs on the CDF wolf server:
+The scripts are currently being run via Cron jobs on the `wolf.teach.cs.toronto.edu` 
+server:
 
 ```
 */5 * * * * /local/bin/python3 ~/cdf-scrapers/printers/printers.py -o ~/public_html
