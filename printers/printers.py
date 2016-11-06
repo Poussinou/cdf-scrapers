@@ -99,9 +99,9 @@ if __name__ == '__main__':
         help='The output filename. Defaults to "cdfprinters.json".',
         required=False)
     argparser.add_argument(
-        '-a', '--all',
-        help='Include all (potentially private) print queue info.',
-        required=False)
+        '-a', '--all', dest='all', action='store_true',
+        help='Include all (potentially private) print queue info.')
+    argparser.set_defaults(all=False)
 
     args = argparser.parse_args()
     output = '.'
