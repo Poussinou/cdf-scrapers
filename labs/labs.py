@@ -57,9 +57,9 @@ class PageParser(HTMLParser):
                     # possibly due to daylight savings
                     raw_time = data.strip('\u00a0\\n')
                     if 'EST' in raw_time:
-                        timestamp = time.strptime(, '%a %b %d %H:%M:%S EST %Y')
+                        timestamp = time.strptime(raw_time, '%a %b %d %H:%M:%S EST %Y')
                     elif 'EDT' in raw_time:
-                        timestamp = time.strptime(, '%a %b %d %H:%M:%S EDT %Y')
+                        timestamp = time.strptime(raw_time, '%a %b %d %H:%M:%S EDT %Y')
 
                     if timestamp:
                         self.timestamp = time.strftime(
