@@ -53,10 +53,17 @@ class PageParser(HTMLParser):
 
             elif self.row_cell == 5:
                 if (self.timestamp == ''):
-                    timestamp = time.strptime(data.strip(
-                        '\u00a0\\n'), '%a %b %d %H:%M:%S EST %Y')
-                    self.timestamp = time.strftime(
-                        '%Y-%m-%d %H:%M:%S EST', timestamp)
+                    # Attempt to compensate for changing timezones,
+                    # possibly due to daylight savings
+                    raw_time = data.strip('\u00a0\\n')
+                    if 'EST' in raw_time:
+                        timestamp = time.strptime(, '%a %b %d %H:%M:%S EST %Y')
+                    elif 'EDT' in raw_time:
+                        timestamp = time.strptime(, '%a %b %d %H:%M:%S EDT %Y')
+
+                    if timestamp:
+                        self.timestamp = time.strftime(
+                            '%Y-%m-%d %H:%M:%S EST', timestamp)
 
                 self.row_cell = -1
 
