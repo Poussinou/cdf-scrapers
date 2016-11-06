@@ -8,7 +8,7 @@ import sys
 import time
 
 
-def getData():
+def getData(all = False):
     """Returns the print queue jobs in a nicely formatted JSON object."""
 
     raw_data = subprocess.Popen(
@@ -52,19 +52,34 @@ def getData():
         if line:
             job_data = line.split()
 
-            job = OrderedDict([
-                ('rank', job_data[0]),
-                ('job', job_data[3])
-            ])
+            if all:
+                job = OrderedDict([
+                    ('raw', line),
+                    ('rank', job_data[0]),
+                    ('owner', job_data[1]),
+                    ('class', job_data[2]),
+                    ('job', job_data[3])
+                ])
+            else:
+                job = OrderedDict([
+                    ('rank', job_data[0]),
+                    ('job', job_data[3])
+                ])
 
             if 'ERROR' in line:
                 job['size']  = '0'
                 job['time']  = ''
                 job['error'] = line[line.index('ERROR'):]
+
+                if all:
+                    job['files'] = ''
             else:
                 job['size'] = job_data[-2]
                 job['time'] = job_data[-1]
                 job['error'] = ''
+
+                if all:
+                    job['files'] = ' '.join(job_data[4:-2])
 
             if not job in parsed[-1]['jobs']:
                 parsed[-1]['jobs'].append(job)
@@ -73,14 +88,6 @@ def getData():
     return parsed
 
 if __name__ == '__main__':
-    timestamp = datetime.datetime.fromtimestamp(
-        time.time()).strftime('%Y-%m-%d %H:%M:%S EST')
-
-    data = OrderedDict([
-        ('timestamp', timestamp),
-        ('printers', getData())
-    ])
-
     argparser = argparse.ArgumentParser(
         description='Scraper for CDF printer queue data.')
     argparser.add_argument(
@@ -91,11 +98,25 @@ if __name__ == '__main__':
         '-f', '--filename',
         help='The output filename. Defaults to "cdfprinters.json".',
         required=False)
+    argparser.add_argument(
+        '-a', '--all',
+        help='Include all (potentially private) print queue info.',
+        required=False)
 
     args = argparser.parse_args()
     output = '.'
     filename = 'cdfprinters.json'
 
+    # Get data
+    timestamp = datetime.datetime.fromtimestamp(
+        time.time()).strftime('%Y-%m-%d %H:%M:%S EST')
+
+    data = OrderedDict([
+        ('timestamp', timestamp),
+        ('printers', getData(args.all))
+    ])
+
+    # Output
     if args.output:
         if not os.path.exists(args.output):
             os.makedirs(args.output)

@@ -71,16 +71,6 @@ class PageParser(HTMLParser):
             self.read_data = False
 
 if __name__ == '__main__':
-    html = str(urllib.request.urlopen(
-        'http://www.teach.cs.toronto.edu/usage/usage.html').read())
-    parser = PageParser()
-    parser.feed(html)
-
-    data = OrderedDict([
-        ('timestamp', parser.timestamp),
-        ('labs', parser.data)
-    ])
-
     argparser = argparse.ArgumentParser(
         description='Scraper for CDF lab data.')
     argparser.add_argument(
@@ -96,6 +86,18 @@ if __name__ == '__main__':
     output = '.'
     filename = 'cdflabs.json'
 
+    # Get data
+    html = str(urllib.request.urlopen(
+        'http://www.teach.cs.toronto.edu/usage/usage.html').read())
+    parser = PageParser()
+    parser.feed(html)
+
+    data = OrderedDict([
+        ('timestamp', parser.timestamp),
+        ('labs', parser.data)
+    ])
+
+    # Output
     if args.output:
         if not os.path.exists(args.output):
             os.makedirs(args.output)
