@@ -1,13 +1,75 @@
 from collections import OrderedDict
-from lxml import html
+from html.parser import HTMLParser
 import argparse
 import datetime
 import json
 import os
 import re
-import requests
 import sys
 import time
+import urllib.request
+
+
+def strip(data):
+    """Helper function for striping whitespace."""
+    return data.strip('\u00a0\\n\\t')
+
+class PageParser(HTMLParser):
+    """Parser for CDF Lab Machine Usage page."""
+
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self._inDiv = False
+        self._inTable = False
+        self._lastStatus = ''
+        self._inParagraph = False
+
+        self.timestamp = ''
+        self.data = []
+
+    def handle_starttag(self, tag, attrs):
+        # Only read contents of div.art-PostContent
+        if tag == 'div':
+            for name, val in attrs:
+                if name == 'class' and val == 'art-PostContent':
+                    self._inDiv = True
+
+        if self._inDiv:
+            if tag == 'table':
+                self._inTable = True
+
+            # Traffic light image in table rows
+            if tag == 'img':
+                for name, val in attrs:
+                    if name == 'title':
+                        self._lastStatus = val
+
+            # Last updated time
+            if tag == 'p':
+                self._inParagraph = True
+
+
+    def handle_data(self, data):
+        if not (self._inDiv and strip(data)):
+            return
+
+        # Status rows
+        if self._lastStatus and self._inTable:
+            self.data.append((strip(data), self._lastStatus))
+
+        # "Status last updated Mon Jan  9 10:51:04 EST 2017"
+        if self._inParagraph:
+            rawTime = re.sub(' +', ' ', data.strip('\u00a0\\nStatus last updated '))
+            parsedTime = time.strptime(rawTime, '%a %b %d %H:%M:%S EST %Y')
+            self.timestamp = time.strftime('%Y-%m-%d %H:%M:%S EST', parsedTime)
+
+    def handle_endtag(self, tag):
+        if self._inDiv:
+            if tag == 'table':
+                self._inTable = False
+
+            if tag == 'div':
+                self._inDiv = False
 
 
 if __name__ == '__main__':
@@ -27,25 +89,15 @@ if __name__ == '__main__':
     filename = 'cdfstatus.json'
 
     # Get data
-    page = requests.get('http://www.teach.cs.toronto.edu/resources/cdf_system_status.html')
-    tree = html.fromstring(page.content)
-
-    # "Status last updated Mon Jan  9 10:51:04 EST 2017"
-    raw_time = str(tree.xpath('//div[@class="art-PostContent"]/p/text()')[0]).strip('\u00a0\\nStatus last updated ')
-    raw_time = re.sub(' +', ' ', raw_time)
-    parsed_time = time.strptime(raw_time, '%a %b %d %H:%M:%S EST %Y')
-    timestamp = time.strftime('%Y-%m-%d %H:%M:%S EST', parsed_time)
-
-    # Table cells
-    status_imgs = tree.xpath('//div[@class="art-PostContent"]/table/tr/td/img/@title')
-    status_names = tree.xpath('//div[@class="art-PostContent"]/table/tr/td/text()')
+    html = str(urllib.request.urlopen(
+        'http://www.teach.cs.toronto.edu/resources/cdf_system_status.html').read())
+    parser = PageParser()
+    parser.feed(html)
 
     data = OrderedDict([
-        ('timestamp', timestamp)
+        ('timestamp', parser.timestamp),
+        ('data', parser.data)
     ])
-
-    for row in range(len(status_imgs)):
-        data[status_names[row]] = status_imgs[row]
 
     # Output
     if args.output:
