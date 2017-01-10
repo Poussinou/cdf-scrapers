@@ -12,63 +12,68 @@ import urllib.request
 class PageParser(HTMLParser):
     """Parser for CDF Lab Machine Usage page."""
 
-    # Flag for whether an element should be parsed
-    read_data = False
+    def __init__(self):
+        HTMLParser.__init__(self)
 
-    # A data row contains 6 cells
-    row_cell = 0
+        # Flag for whether an element should be parsed
+        self.inCell = False
 
-    # List of lab rooms/data
-    data = []
+        # A data row contains 6 cells
+        self.rowCell = 0
 
-    # Timestamp
-    timestamp = ''
+        # List of lab rooms/data
+        self.data = []
+
+        # Timestamp
+        self.timestamp = ''
 
     def handle_starttag(self, tag, attrs):
         # Only read <td> tags
-        if (tag == 'td'):
-            self.read_data = True
+        if tag == 'td':
+            self.inCell = True
 
     def handle_data(self, data):
-        if (self.read_data):
-            if self.row_cell == 0:
-                if (data != 'NX'):
-                    data = 'BA ' + data
+        if not self.inCell:
+            return
 
-                self.data.append(OrderedDict([
-                    ('name', data)
-                ]))
+        if self.rowCell == 0:
+            if (data != 'NX'):
+                data = 'BA ' + data
 
-            elif self.row_cell == 1:
-                self.data[-1]['available'] = int(data)
+            self.data.append(OrderedDict([
+                ('name', data)
+            ]))
 
-            elif self.row_cell == 2:
-                self.data[-1]['busy'] = int(data)
+        elif self.rowCell == 1:
+            self.data[-1]['available'] = int(data)
 
-            elif self.row_cell == 3:
-                self.data[-1]['total'] = int(data)
+        elif self.rowCell == 2:
+            self.data[-1]['busy'] = int(data)
 
-            elif self.row_cell == 4:
-                self.data[-1]['percent'] = float(data)
+        elif self.rowCell == 3:
+            self.data[-1]['total'] = int(data)
 
-            elif self.row_cell == 5:
-                if (self.timestamp == ''):
-                    # Attempt to compensate for changing timezones,
-                    # possibly due to daylight savings
-                    raw_time = data.strip('\u00a0\\n')
-                    if 'EST' in raw_time:
-                        timestamp = time.strptime(raw_time, '%a %b %d %H:%M:%S EST %Y')
-                    elif 'EDT' in raw_time:
-                        timestamp = time.strptime(raw_time, '%a %b %d %H:%M:%S EDT %Y')
+        elif self.rowCell == 4:
+            self.data[-1]['percent'] = float(data)
 
-                    if timestamp:
-                        self.timestamp = time.strftime(
-                            '%Y-%m-%d %H:%M:%S EST', timestamp)
+        elif self.rowCell == 5:
+            if (self.timestamp == ''):
+                # Attempt to compensate for changing timezones,
+                # possibly due to daylight savings
+                rawTime = data.strip('\u00a0\\n')
+                if 'EST' in rawTime:
+                    timestamp = time.strptime(rawTime, '%a %b %d %H:%M:%S EST %Y')
+                elif 'EDT' in rawTime:
+                    timestamp = time.strptime(rawTime, '%a %b %d %H:%M:%S EDT %Y')
 
-                self.row_cell = -1
+                if timestamp:
+                    self.timestamp = time.strftime(
+                        '%Y-%m-%d %H:%M:%S EST', timestamp)
 
-            self.row_cell += 1
-            self.read_data = False
+            self.rowCell = -1
+
+        self.rowCell += 1
+        self.inCell = False
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(

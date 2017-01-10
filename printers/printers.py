@@ -11,25 +11,25 @@ import time
 def getData(all = False):
     """Returns the print queue jobs in a nicely formatted JSON object."""
 
-    raw_data = subprocess.Popen(
+    rawData = subprocess.Popen(
         'lpq -a', shell=True, stdout=subprocess.PIPE).stdout.read()
-    data = raw_data.decode('ISO-8859-1').split('\n')
+    data = rawData.decode('ISO-8859-1').split('\n')
 
     junk = ['@ps2 \'', 'Rank   Owner/ID', ' printable job', 'no server active',
             'Filter_status: ', ' Status: ', ': pid ']
 
     parsed = []
-    new_printer = False
+    isNewPrinter = False
 
     for line in data:
         # New printer section: get description
-        if new_printer:
+        if isNewPrinter:
             if '@ps2' in line:
                 parsed[-1]['description'] = line.split(
                     '@ps2 ')[1].replace("'", "")
             else:
                 parsed[-1]['description'] = line
-            new_printer = False
+            isNewPrinter = False
             continue
 
         # Skip lines we don't care about
@@ -45,25 +45,25 @@ def getData(all = False):
                 ('length', 0),
                 ('jobs', [])
             ]))
-            new_printer = True
+            isNewPrinter = True
             continue
 
         # Actual queued jobs
         if line:
-            job_data = line.split()
+            jobData = line.split()
 
             if all:
                 job = OrderedDict([
                     ('raw', line),
-                    ('rank', job_data[0]),
-                    ('owner', job_data[1]),
-                    ('class', job_data[2]),
-                    ('job', job_data[3])
+                    ('rank', jobData[0]),
+                    ('owner', jobData[1]),
+                    ('class', jobData[2]),
+                    ('job', jobData[3])
                 ])
             else:
                 job = OrderedDict([
-                    ('rank', job_data[0]),
-                    ('job', job_data[3])
+                    ('rank', jobData[0]),
+                    ('job', jobData[3])
                 ])
 
             if 'ERROR' in line:
@@ -74,12 +74,12 @@ def getData(all = False):
                 if all:
                     job['files'] = ''
             else:
-                job['size'] = job_data[-2]
-                job['time'] = job_data[-1]
+                job['size'] = jobData[-2]
+                job['time'] = jobData[-1]
                 job['error'] = ''
 
                 if all:
-                    job['files'] = ' '.join(job_data[4:-2])
+                    job['files'] = ' '.join(jobData[4:-2])
 
             if not job in parsed[-1]['jobs']:
                 parsed[-1]['jobs'].append(job)
