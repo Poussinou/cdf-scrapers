@@ -42,7 +42,7 @@ class PageParser(HTMLParser):
             if tag == 'img':
                 for name, val in attrs:
                     if name == 'title':
-                        self._lastStatus = val
+                        self._lastStatus = val == 'up'
 
             # Last updated time
             if tag == 'p':
@@ -95,9 +95,11 @@ if __name__ == '__main__':
     parser.feed(html)
 
     data = OrderedDict([
-        ('timestamp', parser.timestamp),
-        ('data', parser.data)
+        ('timestamp', parser.timestamp)
     ])
+
+    for key, val in parser.data:
+        data[key] = val
 
     # Output
     if args.output:

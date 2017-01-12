@@ -1,7 +1,7 @@
 # CDF Scrapers
 
 This is a library of scrapers for producing easy-to-consume JSON files of
-information for [UofT CS Teaching Labs](http://www.teach.cs.toronto.edu/) 
+information for [UofT CS Teaching Labs](http://www.teach.cs.toronto.edu/)
 (formally CDF) services.
 
 
@@ -58,6 +58,28 @@ Output of the `lpq -a` command run on the `wolf.teach.cs.toronto.edu` server.
 }
 ```
 
+------
+
+### Status
+
+##### Data
+<http://www.teach.cs.toronto.edu/~cheun550/cdfstatus.json>
+
+##### Scraper source
+<http://www.teach.cs.toronto.edu/resources/cdf_system_status.html>
+
+##### Output format
+```js
+{
+    "timestamp": String,
+    "NX server": Boolean,
+    "MarkUs server": Boolean,
+    "Bulletin boards": Boolean,
+    "PCRS": Boolean,
+    "ssh to dbsrv1": Boolean
+}
+```
+
 ## Usage
 
 To use the scripts, run them using [Python 3](http://python.org/).
@@ -88,7 +110,7 @@ $ python3 SCRIPT_NAME.py -h
 
 ### Running on the server
 
-The scripts are currently being run via Cron jobs on the `wolf.teach.cs.toronto.edu` 
+The scripts are currently being run via Cron jobs on the `wolf.teach.cs.toronto.edu`
 server:
 
 ```
