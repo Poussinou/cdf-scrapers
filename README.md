@@ -110,10 +110,11 @@ $ python3 SCRIPT_NAME.py -h
 
 ### Running on the server
 
-The scripts are currently being run via Cron jobs on the `wolf.teach.cs.toronto.edu`
+The scripts are currently being run via Cron jobs on the `teach.cs.toronto.edu`
 server:
 
 ```
 */5 * * * * /local/bin/python3 ~/cdf-scrapers/printers/printers.py -o ~/public_html
-*/10 * * * * * /local/bin/python3 ~/cdf-scrapers/labs/labs.py -o ~/public_html
+*/10 * * * * /local/bin/python3 ~/cdf-scrapers/labs/labs.py -o ~/public_html
+*/10 * * * * /local/bin/python3 ~/cdf-scrapers/status/status.py -o ~/public_html
 ```
