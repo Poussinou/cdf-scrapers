@@ -72,6 +72,7 @@ Output of the `lpq -a` command run on the `wolf.teach.cs.toronto.edu` server.
 ```js
 {
     "timestamp": String,
+    "ssh to cdf.toronto.edu": Boolean,
     "NX server": Boolean,
     "MarkUs server": Boolean,
     "Bulletin boards": Boolean,
@@ -100,6 +101,7 @@ default file name:
 |-------------|-------------------|
 | labs.py     | cdflabs.json      |
 | printers.py | cdfprinters.json  |
+| status.py   | cdfstatus.json    |
 
 You can use the `-h` flag to see information about the script usage at any time:
 

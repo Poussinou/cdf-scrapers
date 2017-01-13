@@ -54,7 +54,7 @@ class PageParser(HTMLParser):
             return
 
         # Status rows
-        if self._lastStatus and self._inTable:
+        if self._inTable:
             self.data.append((strip(data), self._lastStatus))
 
         # "Status last updated Mon Jan  9 10:51:04 EST 2017"
