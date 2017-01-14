@@ -61,14 +61,11 @@ class PageParser(HTMLParser):
                 # Attempt to compensate for changing timezones,
                 # possibly due to daylight savings
                 rawTime = data.strip('\u00a0\\n')
-                if 'EST' in rawTime:
-                    timestamp = time.strptime(rawTime, '%a %b %d %H:%M:%S EST %Y')
-                elif 'EDT' in rawTime:
-                    timestamp = time.strptime(rawTime, '%a %b %d %H:%M:%S EDT %Y')
+                timestamp = time.strptime(rawTime, '%a %b %d %H:%M:%S %Z %Y')
 
                 if timestamp:
                     self.timestamp = time.strftime(
-                        '%Y-%m-%d %H:%M:%S EST', timestamp)
+                        '%Y-%m-%d %H:%M:%S %Z', timestamp)
 
             self.rowCell = -1
 
