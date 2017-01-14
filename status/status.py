@@ -50,18 +50,21 @@ class PageParser(HTMLParser):
 
 
     def handle_data(self, data):
-        if not (self._inDiv and strip(data)):
+        data = strip(data)
+
+        if not (self._inDiv and data):
             return
 
         # Status rows
         if self._inTable:
-            self.data.append((strip(data), self._lastStatus))
+            self.data.append((data, self._lastStatus))
 
         # "Status last updated Mon Jan  9 10:51:04 EST 2017"
         if self._inParagraph:
-            rawTime = re.sub(' +', ' ', data.strip('\u00a0\\nStatus last updated '))
-            parsedTime = time.strptime(rawTime, '%a %b %d %H:%M:%S EST %Y')
-            self.timestamp = time.strftime('%Y-%m-%d %H:%M:%S EST', parsedTime)
+            rawTime = ' '.join(data.split())                # Remove excessive whitespace
+            rawTime = re.sub(r'(?:\\n|\\t)+', '', rawTime)  # Remove literal "\n" and "\t"
+            parsedTime = time.strptime(rawTime, 'Status last updated %a %b %d %H:%M:%S %Z %Y')
+            self.timestamp = time.strftime('%Y-%m-%d %H:%M:%S %Z', parsedTime)
 
     def handle_endtag(self, tag):
         if self._inDiv:
