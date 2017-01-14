@@ -25,7 +25,7 @@ class PageParser(HTMLParser):
         self._inParagraph = False
 
         self.timestamp = ''
-        self.data = []
+        self.data = OrderedDict()
 
     def handle_starttag(self, tag, attrs):
         # Only read contents of div.art-PostContent
@@ -57,7 +57,7 @@ class PageParser(HTMLParser):
 
         # Status rows
         if self._inTable:
-            self.data.append((data, self._lastStatus))
+            self.data[data] = self._lastStatus
 
         # "Status last updated Mon Jan  9 10:51:04 EST 2017"
         if self._inParagraph:
@@ -98,11 +98,9 @@ if __name__ == '__main__':
     parser.feed(html)
 
     data = OrderedDict([
-        ('timestamp', parser.timestamp)
+        ('timestamp', parser.timestamp),
+        ('statuses', parser.data)
     ])
-
-    for key, val in parser.data:
-        data[key] = val
 
     # Output
     if args.output:

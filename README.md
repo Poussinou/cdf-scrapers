@@ -72,12 +72,14 @@ Output of the `lpq -a` command run on the `wolf.teach.cs.toronto.edu` server.
 ```js
 {
     "timestamp": String,
-    "ssh to cdf.toronto.edu": Boolean,
-    "NX server": Boolean,
-    "MarkUs server": Boolean,
-    "Bulletin boards": Boolean,
-    "PCRS": Boolean,
-    "ssh to dbsrv1": Boolean
+    "statuses": {
+        "ssh to cdf.toronto.edu": Boolean,
+        "NX server": Boolean,
+        "MarkUs server": Boolean,
+        "Bulletin boards": Boolean,
+        "PCRS": Boolean,
+        "ssh to dbsrv1": Boolean
+    }
 }
 ```
 
