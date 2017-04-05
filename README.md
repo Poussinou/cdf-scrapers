@@ -10,7 +10,7 @@ information for [UofT CS Teaching Labs](http://www.teach.cs.toronto.edu/)
 ### Lab machine availability
 
 ##### Data
-<http://www.teach.cs.toronto.edu/~cheun550/cdflabs.json>
+<http://www.teach.cs.toronto.edu/~cheun550/cdflabs.json> ([CSSU mirror](https://cssu.ca/data/cdflabs.json))
 
 ##### Scraper source
 <http://www.teach.cs.toronto.edu/usage/usage.html>
@@ -34,7 +34,7 @@ information for [UofT CS Teaching Labs](http://www.teach.cs.toronto.edu/)
 ### Printer job queues
 
 ##### Data
-<http://www.teach.cs.toronto.edu/~cheun550/cdfprinters.json>
+<http://www.teach.cs.toronto.edu/~cheun550/cdfprinters.json> ([CSSU mirror](https://cssu.ca/data/cdfprinters.json))
 
 ##### Scraper source
 Output of the `lpq -a` command run on the `wolf.teach.cs.toronto.edu` server.
@@ -63,7 +63,7 @@ Output of the `lpq -a` command run on the `wolf.teach.cs.toronto.edu` server.
 ### Status
 
 ##### Data
-<http://www.teach.cs.toronto.edu/~cheun550/cdfstatus.json>
+<http://www.teach.cs.toronto.edu/~cheun550/cdfstatus.json> ([CSSU mirror](https://cssu.ca/data/cdfstatus.json))
 
 ##### Scraper source
 <http://www.teach.cs.toronto.edu/resources/cdf_system_status.html>
