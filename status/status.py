@@ -60,7 +60,7 @@ class PageParser(HTMLParser):
             self.data[data] = self._lastStatus
 
         # "Status last updated Mon Jan  9 10:51:04 EST 2017"
-        if self._inParagraph:
+        if self._inParagraph and 'Status last updated' in data:
             rawTime = ' '.join(data.split())                # Remove excessive whitespace
             rawTime = re.sub(r'(?:\\n|\\t)+', '', rawTime)  # Remove literal "\n" and "\t"
             parsedTime = time.strptime(rawTime, 'Status last updated %a %b %d %H:%M:%S %Z %Y')
